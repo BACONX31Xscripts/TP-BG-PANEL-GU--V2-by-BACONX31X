@@ -1,24 +1,80 @@
-local Players = game:GetService("Players") local player = Players.LocalPlayer
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
 
 if not player:IsInGroup(34767504) then return end
 
-local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui")) local frame = Instance.new("Frame", gui) frame.Size = UDim2.new(0, 300, 0, 160) frame.Position = UDim2.new(0.5, -150, 0.5, -80) frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255) frame.Active = true frame.Draggable = true
+local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 300, 0, 140)
+frame.Position = UDim2.new(0.5, -150, 0.5, -70)
+frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+frame.Active = true
+frame.Draggable = true
 
-local toggle = Instance.new("TextButton", frame) toggle.Size = UDim2.new(0, 30, 0, 30) toggle.Position = UDim2.new(1, -35, 0, 5) toggle.Text = "-" toggle.Font = Enum.Font.SourceSansBold toggle.TextSize = 22 toggle.BackgroundColor3 = Color3.fromRGB(200, 200, 200) toggle.TextColor3 = Color3.new(0, 0, 0)
+local toggle = Instance.new("TextButton", frame)
+toggle.Size = UDim2.new(0, 30, 0, 30)
+toggle.Position = UDim2.new(1, -35, 0, 5)
+toggle.Text = "-"
+toggle.Font = Enum.Font.SourceSansBold
+toggle.TextSize = 22
+toggle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+toggle.TextColor3 = Color3.new(0, 0, 0)
 
-local nameBox = Instance.new("TextBox", frame) nameBox.Size = UDim2.new(1, -40, 0, 35) nameBox.Position = UDim2.new(0, 10, 0, 10) nameBox.PlaceholderText = "Enter name" nameBox.Font = Enum.Font.SourceSans nameBox.TextSize = 20 nameBox.TextColor3 = Color3.new(0, 0, 0) nameBox.ClearTextOnFocus = false
+local nameBox = Instance.new("TextBox", frame)
+nameBox.Size = UDim2.new(1, -40, 0, 35)
+nameBox.Position = UDim2.new(0, 10, 0, 10)
+nameBox.PlaceholderText = "Name"
+nameBox.Font = Enum.Font.SourceSans
+nameBox.TextSize = 20
+nameBox.TextColor3 = Color3.new(0,0,0)
+nameBox.ClearTextOnFocus = false
 
-local bring = Instance.new("TextButton", frame) bring.Size = UDim2.new(0.45, -10, 0, 40) bring.Position = UDim2.new(0, 10, 0, 60) bring.Text = "Bring" bring.Font = Enum.Font.SourceSansBold bring.TextSize = 22 bring.BackgroundColor3 = Color3.fromRGB(100, 150, 255) bring.TextColor3 = Color3.new(1, 1, 1)
+local bring = Instance.new("TextButton", frame)
+bring.Size = UDim2.new(0.45, -10, 0, 40)
+bring.Position = UDim2.new(0, 10, 0, 60)
+bring.Text = "Bring"
+bring.Font = Enum.Font.SourceSansBold
+bring.TextSize = 22
+bring.BackgroundColor3 = Color3.fromRGB(100, 150, 255)
+bring.TextColor3 = Color3.new(1, 1, 1)
 
-local tp = Instance.new("TextButton", frame) tp.Size = UDim2.new(0.45, -10, 0, 40) tp.Position = UDim2.new(0.55, 0, 0, 60) tp.Text = "Teleport" tp.Font = Enum.Font.SourceSansBold tp.TextSize = 22 tp.BackgroundColor3 = Color3.fromRGB(100, 200, 150) tp.TextColor3 = Color3.new(1, 1, 1)
+local tp = Instance.new("TextButton", frame)
+tp.Size = UDim2.new(0.45, -10, 0, 40)
+tp.Position = UDim2.new(0.55, 0, 0, 60)
+tp.Text = "Teleport"
+tp.Font = Enum.Font.SourceSansBold
+tp.TextSize = 22
+tp.BackgroundColor3 = Color3.fromRGB(100, 200, 150)
+tp.TextColor3 = Color3.new(1, 1, 1)
 
-local statusLabel = Instance.new("TextLabel", frame) statusLabel.Size = UDim2.new(1, -20, 0, 25) statusLabel.Position = UDim2.new(0, 10, 1, -30) statusLabel.Text = "" statusLabel.Font = Enum.Font.SourceSans statusLabel.TextSize = 18 statusLabel.TextColor3 = Color3.fromRGB(255, 0, 0) statusLabel.BackgroundTransparency = 1
+local minimized = false
+toggle.MouseButton1Click:Connect(function()
+    minimized = not minimized
+    nameBox.Visible = not minimized
+    bring.Visible = not minimized
+    tp.Visible = not minimized
+    toggle.Text = minimized and "+" or "-"
+    frame.Size = minimized and UDim2.new(0, 60, 0, 40) or UDim2.new(0, 300, 0, 140)
+end)
 
-local minimized = false toggle.MouseButton1Click:Connect(function() minimized = not minimized nameBox.Visible = not minimized bring.Visible = not minimized tp.Visible = not minimized statusLabel.Visible = not minimized toggle.Text = minimized and "+" or "-" frame.Size = minimized and UDim2.new(0, 60, 0, 40) or UDim2.new(0, 300, 0, 160) end)
+local function getPlayer(name)
+    for _, p in pairs(Players:GetPlayers()) do
+        if p.Name:lower() == name:lower() then
+            return p
+        end
+    end
+end
 
-local function getPlayer(name) for _, p in pairs(Players:GetPlayers()) do if p.Name:lower() == name:lower() then return p end end end
+bring.MouseButton1Click:Connect(function()
+    local target = getPlayer(nameBox.Text)
+    if target and target.Character and player.Character and target.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("HumanoidRootPart") then
+        target.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame + Vector3.new(3, 0, 0)
+    end
+end)
 
-bring.MouseButton1Click:Connect(function() local target = getPlayer(nameBox.Text) if target and target.Character and player.Character and target.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("HumanoidRootPart") then target.Character:MoveTo(player.Character.HumanoidRootPart.Position + Vector3.new(3, 0, 0)) statusLabel.Text = "Brought: " .. target.Name task.delay(2.5, function() statusLabel.Text = "" end) else statusLabel.Text = "Player not found." task.delay(2.5, function() statusLabel.Text = "" end) end end)
-
-tp.MouseButton1Click:Connect(function() local target = getPlayer(nameBox.Text) if target and target.Character and player.Character and target.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("HumanoidRootPart") then player.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame + Vector3.new(3, 0, 0) statusLabel.Text = "Teleported to: " .. target.Name task.delay(2.5, function() statusLabel.Text = "" end) else statusLabel.Text = "Player not found." task.delay(2.5, function() statusLabel.Text = "" end) end end)
-
+tp.MouseButton1Click:Connect(function()
+    local target = getPlayer(nameBox.Text)
+    if target and target.Character and player.Character and target.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("HumanoidRootPart") then
+        player.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame + Vector3.new(3, 0, 0)
+    end
+end)
