@@ -1,0 +1,50 @@
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local GroupId = 34767504
+
+local ScreenGui = Instance.new("ScreenGui", player.PlayerGui)
+local Frame = Instance.new("Frame", ScreenGui)
+Frame.Size = UDim2.new(0, 350, 0, 150)
+Frame.Position = UDim2.new(0.5, -175, 0.4, -75)
+Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Frame.BorderSizePixel = 0
+Frame.AnchorPoint = Vector2.new(0.5, 0.5)
+
+local Title = Instance.new("TextLabel", Frame)
+Title.Size = UDim2.new(1, 0, 0, 50)
+Title.Position = UDim2.new(0, 0, 0, 10)
+Title.BackgroundTransparency = 1
+Title.Text = "Join CG DEISG Group (By BACONX31X)"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.SourceSansBold
+Title.TextSize = 24
+
+local JoinButton = Instance.new("TextButton", Frame)
+JoinButton.Size = UDim2.new(0, 150, 0, 40)
+JoinButton.Position = UDim2.new(0.5, -75, 0, 70)
+JoinButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+JoinButton.Text = "I joined ✅"
+JoinButton.Font = Enum.Font.SourceSansSemibold
+JoinButton.TextSize = 20
+JoinButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+JoinButton.AutoButtonColor = true
+
+local WarningLabel = Instance.new("TextLabel", Frame)
+WarningLabel.Size = UDim2.new(1, 0, 0, 30)
+WarningLabel.Position = UDim2.new(0, 0, 1, -35)
+WarningLabel.BackgroundTransparency = 1
+WarningLabel.Text = ""
+WarningLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
+WarningLabel.Font = Enum.Font.SourceSansBold
+WarningLabel.TextSize = 20
+
+JoinButton.MouseButton1Click:Connect(function()
+    if player:IsInGroup(GroupId) then
+        ScreenGui:Destroy()
+        -- Ana scripti buraya ekle
+    else
+        WarningLabel.Text = "You did not participate ❌"
+        wait(5)
+        WarningLabel.Text = ""
+    end
+end)
