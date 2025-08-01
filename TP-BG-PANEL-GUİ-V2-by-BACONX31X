@@ -1,80 +1,189 @@
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
+local GroupId = 34767504
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+local UserInputService = game:GetService("UserInputService")
 
-if not player:IsInGroup(34767504) then return end
-
-local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
-local frame = Instance.new("Frame", gui)
-frame.Size = UDim2.new(0, 300, 0, 140)
-frame.Position = UDim2.new(0.5, -150, 0.5, -70)
-frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-frame.Active = true
-frame.Draggable = true
-
-local toggle = Instance.new("TextButton", frame)
-toggle.Size = UDim2.new(0, 30, 0, 30)
-toggle.Position = UDim2.new(1, -35, 0, 5)
-toggle.Text = "-"
-toggle.Font = Enum.Font.SourceSansBold
-toggle.TextSize = 22
-toggle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
-toggle.TextColor3 = Color3.new(0, 0, 0)
-
-local nameBox = Instance.new("TextBox", frame)
-nameBox.Size = UDim2.new(1, -40, 0, 35)
-nameBox.Position = UDim2.new(0, 10, 0, 10)
-nameBox.PlaceholderText = "Name"
-nameBox.Font = Enum.Font.SourceSans
-nameBox.TextSize = 20
-nameBox.TextColor3 = Color3.new(0,0,0)
-nameBox.ClearTextOnFocus = false
-
-local bring = Instance.new("TextButton", frame)
-bring.Size = UDim2.new(0.45, -10, 0, 40)
-bring.Position = UDim2.new(0, 10, 0, 60)
-bring.Text = "Bring"
-bring.Font = Enum.Font.SourceSansBold
-bring.TextSize = 22
-bring.BackgroundColor3 = Color3.fromRGB(100, 150, 255)
-bring.TextColor3 = Color3.new(1, 1, 1)
-
-local tp = Instance.new("TextButton", frame)
-tp.Size = UDim2.new(0.45, -10, 0, 40)
-tp.Position = UDim2.new(0.55, 0, 0, 60)
-tp.Text = "Teleport"
-tp.Font = Enum.Font.SourceSansBold
-tp.TextSize = 22
-tp.BackgroundColor3 = Color3.fromRGB(100, 200, 150)
-tp.TextColor3 = Color3.new(1, 1, 1)
-
-local minimized = false
-toggle.MouseButton1Click:Connect(function()
-    minimized = not minimized
-    nameBox.Visible = not minimized
-    bring.Visible = not minimized
-    tp.Visible = not minimized
-    toggle.Text = minimized and "+" or "-"
-    frame.Size = minimized and UDim2.new(0, 60, 0, 40) or UDim2.new(0, 300, 0, 140)
-end)
-
-local function getPlayer(name)
-    for _, p in pairs(Players:GetPlayers()) do
-        if p.Name:lower() == name:lower() then
-            return p
-        end
-    end
+if playerGui:FindFirstChild("MyToggleGui") then
+    playerGui.MyToggleGui:Destroy()
 end
 
-bring.MouseButton1Click:Connect(function()
-    local target = getPlayer(nameBox.Text)
-    if target and target.Character and player.Character and target.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("HumanoidRootPart") then
-        target.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame + Vector3.new(3, 0, 0)
+local groupGui = Instance.new("ScreenGui", playerGui)
+groupGui.Name = "GroupCheckGui"
+
+local groupFrame = Instance.new("Frame", groupGui)
+groupFrame.Size = UDim2.new(0, 400, 0, 200)
+groupFrame.Position = UDim2.new(0.5, -200, 0.5, -100)
+groupFrame.BackgroundColor3 = Color3.fromRGB(0,0,0)
+
+local titleLabel = Instance.new("TextLabel", groupFrame)
+titleLabel.Size = UDim2.new(1, 0, 0, 60)
+titleLabel.Position = UDim2.new(0, 0, 0, 10)
+titleLabel.BackgroundTransparency = 1
+titleLabel.TextColor3 = Color3.new(1,1,1)
+titleLabel.Font = Enum.Font.SourceSansBold
+titleLabel.TextSize = 24
+titleLabel.Text = "JOIN THE CG DEISG GROUP (by BACONX31X)"
+
+local joinButton = Instance.new("TextButton", groupFrame)
+joinButton.Size = UDim2.new(0.6, 0, 0, 50)
+joinButton.Position = UDim2.new(0.2, 0, 0, 100)
+joinButton.BackgroundColor3 = Color3.fromRGB(0,170,0)
+joinButton.TextColor3 = Color3.new(1,1,1)
+joinButton.Font = Enum.Font.SourceSansBold
+joinButton.TextSize = 22
+joinButton.Text = "I Joined the Group ✅"
+
+local warningLabel = Instance.new("TextLabel", groupFrame)
+warningLabel.Size = UDim2.new(1, -20, 0, 40)
+warningLabel.Position = UDim2.new(0, 10, 1, -50)
+warningLabel.BackgroundTransparency = 1
+warningLabel.TextColor3 = Color3.fromRGB(1,0,0)
+warningLabel.Font = Enum.Font.SourceSansBold
+warningLabel.TextSize = 20
+warningLabel.Text = ""
+
+local mainGui = Instance.new("ScreenGui", playerGui)
+mainGui.Name = "MyToggleGui"
+mainGui.Enabled = false
+
+local frame = Instance.new("Frame", mainGui)
+frame.Size = UDim2.new(0, 350, 0, 250)
+frame.Position = UDim2.new(0.5, -175, 0.5, -125)
+frame.BackgroundColor3 = Color3.new(0,0,0)
+
+local mainTitleLabel = Instance.new("TextLabel", frame)
+mainTitleLabel.Size = UDim2.new(1, 0, 0, 40)
+mainTitleLabel.BackgroundTransparency = 1
+mainTitleLabel.Text = "Teleport & Bring GUI"
+mainTitleLabel.TextColor3 = Color3.new(1,1,1)
+mainTitleLabel.Font = Enum.Font.SourceSansBold
+mainTitleLabel.TextSize = 24
+
+local nameBox = Instance.new("TextBox", frame)
+nameBox.Size = UDim2.new(0.9, 0, 0, 30)
+nameBox.Position = UDim2.new(0.05, 0, 0, 50)
+nameBox.PlaceholderText = "Oyuncu adı yaz..."
+nameBox.ClearTextOnFocus = false
+nameBox.TextColor3 = Color3.new(1,1,1)
+nameBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+
+local teleportButton = Instance.new("TextButton", frame)
+teleportButton.Size = UDim2.new(0.4, 0, 0, 40)
+teleportButton.Position = UDim2.new(0.05, 0, 0, 100)
+teleportButton.BackgroundColor3 = Color3.fromRGB(0,170,0)
+teleportButton.Text = "Teleport"
+teleportButton.TextColor3 = Color3.new(1,1,1)
+teleportButton.Font = Enum.Font.SourceSansBold
+teleportButton.TextSize = 20
+
+local bringButton = Instance.new("TextButton", frame)
+bringButton.Size = UDim2.new(0.4, 0, 0, 40)
+bringButton.Position = UDim2.new(0.55, 0, 0, 100)
+bringButton.BackgroundColor3 = Color3.fromRGB(170,0,0)
+bringButton.Text = "Bring"
+bringButton.TextColor3 = Color3.new(1,1,1)
+bringButton.Font = Enum.Font.SourceSansBold
+bringButton.TextSize = 20
+
+local infoLabel = Instance.new("TextLabel", frame)
+infoLabel.Size = UDim2.new(1, -10, 0, 50)
+infoLabel.Position = UDim2.new(0, 5, 1, -55)
+infoLabel.BackgroundTransparency = 1
+infoLabel.TextColor3 = Color3.fromRGB(1, 0.4, 0.4)
+infoLabel.TextWrapped = true
+infoLabel.Text = ""
+infoLabel.Font = Enum.Font.SourceSans
+infoLabel.TextSize = 18
+
+local guiVisible = true
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    if input.KeyCode == Enum.KeyCode.Minus and mainGui.Enabled then
+        guiVisible = not guiVisible
+        mainGui.Enabled = guiVisible
     end
 end)
 
-tp.MouseButton1Click:Connect(function()
-    local target = getPlayer(nameBox.Text)
-    if target and target.Character and player.Character and target.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("HumanoidRootPart") then
-        player.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame + Vector3.new(3, 0, 0)
+local function findPlayerByName(name)
+    name = name:lower()
+    for _, plr in pairs(game.Players:GetPlayers()) do
+        if plr.Name:lower():find(name) then
+            return plr
+        end
+    end
+    return nil
+end
+
+local function teleportToPlayer(target)
+    if not target.Character or not target.Character:FindFirstChild("HumanoidRootPart") then
+        return false, "Hedef oyuncunun karakteri bulunamadı."
+    end
+    local hrp = target.Character.HumanoidRootPart
+    if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+        player.Character.HumanoidRootPart.CFrame = hrp.CFrame + Vector3.new(0,5,0)
+        return true
+    end
+    return false, "Senin karakterin bulunamadı."
+end
+
+local function bringPlayer(target)
+    if not target.Character or not target.Character:FindFirstChild("HumanoidRootPart") then
+        return false, "Hedef oyuncunun karakteri bulunamadı."
+    end
+    local hrp = target.Character.HumanoidRootPart
+    if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+        hrp.CFrame = player.Character.HumanoidRootPart.CFrame + Vector3.new(3,0,0)
+        return true
+    end
+    return false, "Senin karakterin bulunamadı."
+end
+
+teleportButton.MouseButton1Click:Connect(function()
+    local targetName = nameBox.Text
+    local targetPlayer = findPlayerByName(targetName)
+    if targetPlayer then
+        local success, err = teleportToPlayer(targetPlayer)
+        if success then
+            infoLabel.Text = "Başarıyla teleport olundu: "..targetPlayer.Name
+        else
+            infoLabel.Text = "Hata: "..err
+        end
+    else
+        infoLabel.Text = "Oyuncu bulunamadı: "..targetName
+    end
+end)
+
+bringButton.MouseButton1Click:Connect(function()
+    local targetName = nameBox.Text
+    local targetPlayer = findPlayerByName(targetName)
+    if targetPlayer then
+        local success, err = bringPlayer(targetPlayer)
+        if success then
+            infoLabel.Text = "Başarıyla oyuncu getirildi: "..targetPlayer.Name
+        else
+            infoLabel.Text = "Hata: "..err
+        end
+    else
+        infoLabel.Text = "Oyuncu bulunamadı: "..targetName
+    end
+end)
+
+local function checkGroupMembership()
+    for _, g in pairs(player:GetGroups()) do
+        if g.Id == GroupId then
+            return true
+        end
+    end
+    return false
+end
+
+joinButton.MouseButton1Click:Connect(function()
+    if checkGroupMembership() then
+        groupGui:Destroy()
+        mainGui.Enabled = true
+    else
+        warningLabel.Text = "You have not joined the group! ❌"
+        wait(5)
+        warningLabel.Text = ""
     end
 end)
